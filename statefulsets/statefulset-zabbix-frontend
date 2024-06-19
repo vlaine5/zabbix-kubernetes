@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  namespace: zabbix
+  creationTimestamp: null
+  labels:
+    app: zabbix-server
+  name: zabbix-web-nginx-mysql
+spec:
+  selector:
+    matchLabels:
+      zabbix-app: zabbix-server
+  serviceName: "zabbix-web"
+  replicas: 1
+  #strategy:
+  #  type: Recreate
+  template:
+    metadata:
+      labels:
+        zabbix-app: zabbix-server
+    spec:
+      containers:
+      - env:     
+        - name: MYSQL_DATABASE
+          value: "zabbix"
+
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: db-root-pass
+              name: db-secret
+
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: db-zbx-pass
+              name: db-secret
+
+        - name: ZBX_SERVER_HOST
+          value: "zabbix-server"
+
+        - name: ZBX_SERVER_NAME
+          value: "Composed installation"
+
+        image: zabbix/zabbix-web-nginx-mysql:ubuntu-6.4-latest
+        livenessProbe:
+          exec:
+            command:
+            - curl
+            - -f
+            - http://localhost
+          failureThreshold: 3
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+        name: zabbix-web-nginx-mysql
+        ports:
+        - containerPort: 80
+        resources: {}

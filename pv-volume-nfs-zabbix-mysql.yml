@@ -1,0 +1,18 @@
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+   name: zabbix-mysql-pv
+   namespace: zabbix
+   labels:
+     app: mysql-server
+spec:
+  storageClassName: nfs-zabbix
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteMany
+  mountOptions:
+   - nfsvers=4.1
+  nfs:
+    server: 192.168.45.26
+    path: /volumes/zabbixmysql

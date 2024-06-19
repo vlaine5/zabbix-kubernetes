@@ -1,0 +1,14 @@
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+   name: zabbix-mysql-pvc
+   namespace: zabbix
+   labels:
+     app: mysql-server
+spec:
+   storageClassName: nfs-zabbix
+   accessModes:
+      - ReadWriteMany
+   resources:
+      requests:
+        storage: 10Gi
